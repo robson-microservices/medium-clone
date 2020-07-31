@@ -10,11 +10,11 @@ import Banner from '../components/Banner'
 import DisplayMessage from '../components/DisplayMessage'
 import Loading from '../components/Loading'
 
-const GlobalFeed = () => {
+const YourFeed = () => {
   const { search } = useLocation()
   const { path } = useRouteMatch()
   const { offset, currentPage } = getPaginator(search)
-  const apiURL = `/articles?limit=${limit}&offset=${offset}`
+  const apiURL = `/articles/feed/?limit=${limit}&offset=${offset}`
   const [{ response, loading, error }, doFetch] = useFetch(apiURL)
 
   useEffect(() => {
@@ -51,4 +51,4 @@ const GlobalFeed = () => {
   )
 }
 
-export default GlobalFeed
+export default YourFeed

@@ -7,19 +7,19 @@ import { getPaginator, limit } from 'utils'
 import PopularTags from '../components/PopularTags'
 import FeedToggler from '../components/FeedToggler'
 import Banner from '../components/Banner'
-import DisplayMessage from '../components/DisplayMessage'
 import Loading from '../components/Loading'
+import DisplayMessage from '../components/DisplayMessage'
 
-const GlobalFeed = () => {
+const TagFeed = () => {
   const { search } = useLocation()
-  const { path } = useRouteMatch()
+  const { path, params } = useRouteMatch()
   const { offset, currentPage } = getPaginator(search)
-  const apiURL = `/articles?limit=${limit}&offset=${offset}`
+  const apiURL = `/articles?limit=${limit}&offset=${offset}&tag=${params.slug}`
   const [{ response, loading, error }, doFetch] = useFetch(apiURL)
 
   useEffect(() => {
     doFetch()
-  }, [doFetch, currentPage])
+  }, [doFetch, currentPage, params.slug])
 
   return (
     <div className="home-page">
@@ -27,9 +27,9 @@ const GlobalFeed = () => {
       <div className="container page">
         <div className="row">
           <div className="col-md-9">
-            <FeedToggler />
+            <FeedToggler tagName={params.slug} />
             {loading && <Loading />}
-            {error && <DisplayMessage message="Some error happened" />}
+            {error && <DisplayMessage message="Error occurred" />}
             {!loading && response && (
               <>
                 <Feed articles={response.articles} />
@@ -51,4 +51,4 @@ const GlobalFeed = () => {
   )
 }
 
-export default GlobalFeed
+export default TagFeed
