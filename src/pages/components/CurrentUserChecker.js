@@ -1,39 +1,28 @@
 import { useFetch } from 'hooks/useFetch'
 import { useEffect, useContext } from 'react'
-import { CurrentUserContext } from 'contexts/currentUser'
+import { CurrentUserContext, LOADING_TYPE } from 'contexts/currentUser'
 import { useLocalStorage } from 'hooks/useLocalStorage'
+import { SET_AUTHORIZED_TYPE } from '../../contexts/currentUser'
 
 const CurrentUserChecker = ({ children }) => {
-  const [, setCurrentUser] = useContext(CurrentUserContext)
+  const [, dispatch] = useContext(CurrentUserContext)
   const [{ response }, doFetch] = useFetch('/user')
   const [token] = useLocalStorage('token')
 
   useEffect(() => {
     if (!token) {
-      setCurrentUser((state) => ({
-        ...state,
-        isLoggedIn: false,
-      }))
       return
     }
-    setCurrentUser((state) => ({
-      ...state,
-      isLoading: true,
-    }))
+    dispatch({ type: LOADING_TYPE })
     doFetch()
-  }, [doFetch, setCurrentUser, token])
+  }, [dispatch, doFetch, token])
 
   useEffect(() => {
     if (!response) {
       return
     }
-    setCurrentUser((state) => ({
-      ...state,
-      isLoading: false,
-      isLoggedIn: true,
-      currentUser: response.user,
-    }))
-  }, [response, setCurrentUser])
+    dispatch({ type: SET_AUTHORIZED_TYPE, payload: response.user })
+  }, [dispatch, response])
 
   return children
 }

@@ -7,6 +7,7 @@ const Topbar = () => {
   const userImage =
     (currentUserState.isLoggedIn && currentUserState.currentUser.image) ||
     'https://static.productionready.io/images/smiley-cyrus.jpg'
+
   return (
     <nav className="navbar navbar-light">
       <div className="container">

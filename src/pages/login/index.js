@@ -2,7 +2,11 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { useFetch } from 'hooks/useFetch'
 import { useLocalStorage } from 'hooks/useLocalStorage'
-import { CurrentUserContext } from 'contexts/currentUser'
+import {
+  CurrentUserContext,
+  LOADING_TYPE,
+  SET_AUTHORIZED_TYPE,
+} from 'contexts/currentUser'
 import ErrorMessage from '../components/ErrorMessage'
 
 const Login = () => {
@@ -12,15 +16,12 @@ const Login = () => {
   const [{ loading, response, error }, doFetch] = useFetch('/users/login')
   const [, setToken] = useLocalStorage('token')
 
-  const [, setCurrentUser] = useContext(CurrentUserContext)
+  const [, dispatch] = useContext(CurrentUserContext)
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
-    setCurrentUser((state) => ({
-      ...state,
-      isLoading: true,
-    }))
+    dispatch({ type: LOADING_TYPE })
 
     doFetch({
       method: 'post',
@@ -36,13 +37,8 @@ const Login = () => {
     }
     setToken(response.user.token)
     isSuccess(true)
-    setCurrentUser((state) => ({
-      ...state,
-      isLoading: false,
-      isLoggedIn: true,
-      currentUser: response.user,
-    }))
-  }, [response, setCurrentUser, setToken])
+    dispatch({ type: SET_AUTHORIZED_TYPE, payload: response.user })
+  }, [dispatch, response, setToken])
 
   if (success) {
     return <Redirect to="/" />
